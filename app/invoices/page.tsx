@@ -1,6 +1,6 @@
-import { Plus } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import InvoicesTable from "@/app/components/InvoicesTable";
+import NewInvoiceButton from "@/app/components/NewInvoiceButton";
 import { invoices } from "@/app/lib/mock-data";
 
 export default function InvoicesPage() {
@@ -19,13 +19,7 @@ export default function InvoicesPage() {
             </p>
           </div>
 
-          <button
-            type="button"
-            className="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
-          >
-            <Plus className="h-4 w-4" strokeWidth={2.2} />
-            <span className="hidden sm:inline">Nouvelle facture</span>
-          </button>
+          <NewInvoiceButton />
         </header>
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
