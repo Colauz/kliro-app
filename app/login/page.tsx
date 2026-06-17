@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Mail, Lock, ArrowRight } from "lucide-react";
 
 function GithubIcon({ className }: { className?: string }) {
@@ -15,6 +18,14 @@ function GithubIcon({ className }: { className?: string }) {
 }
 
 export default function LoginPage() {
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    // Mock : pas d'authentification réelle, on redirige vers le tableau de bord.
+    router.push("/");
+  };
+
   return (
     <div className="flex min-h-screen flex-1 items-center justify-center bg-gray-50 px-4 py-12">
       <div className="w-full max-w-sm">
@@ -31,7 +42,7 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label
                 htmlFor="email"
