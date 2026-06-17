@@ -73,3 +73,63 @@ export const activity: ActivityItem[] = [
   { id: "a3", type: "client_added", label: "Nouveau client ajouté", detail: "Maison Vert", time: "hier" },
   { id: "a4", type: "invoice_sent", label: "Facture #INV-127 envoyée", detail: "Studio Lumen · 980 €", time: "il y a 2 j" },
 ];
+
+export type ProjectStatus = "in_progress" | "review" | "completed" | "on_hold";
+
+export interface Project {
+  id: string;
+  clientId: string;
+  name: string;
+  status: ProjectStatus;
+  progress: number;
+  dueDate: string;
+}
+
+export interface Document {
+  id: string;
+  clientId: string;
+  name: string;
+  type: "PDF" | "DOCX" | "XLSX" | "PNG" | "ZIP";
+  size: string;
+  sharedAt: string;
+}
+
+export const projects: Project[] = [
+  { id: "p1", clientId: "c1", name: "Refonte site vitrine", status: "in_progress", progress: 65, dueDate: "30 juin 2026" },
+  { id: "p2", clientId: "c1", name: "Charte graphique", status: "review", progress: 90, dueDate: "20 juin 2026" },
+  { id: "p3", clientId: "c2", name: "Application mobile", status: "in_progress", progress: 40, dueDate: "15 juil. 2026" },
+  { id: "p4", clientId: "c3", name: "Branding complet", status: "completed", progress: 100, dueDate: "2 juin 2026" },
+  { id: "p5", clientId: "c3", name: "Packaging produit", status: "in_progress", progress: 55, dueDate: "10 juil. 2026" },
+  { id: "p6", clientId: "c3", name: "Site e-commerce", status: "on_hold", progress: 25, dueDate: "À définir" },
+  { id: "p7", clientId: "c4", name: "Identité visuelle", status: "in_progress", progress: 30, dueDate: "5 juil. 2026" },
+  { id: "p8", clientId: "c6", name: "Design system", status: "in_progress", progress: 70, dueDate: "28 juin 2026" },
+  { id: "p9", clientId: "c6", name: "Landing page", status: "review", progress: 85, dueDate: "22 juin 2026" },
+];
+
+export const documents: Document[] = [
+  { id: "d1", clientId: "c1", name: "Contrat de prestation.pdf", type: "PDF", size: "240 Ko", sharedAt: "12 juin 2026" },
+  { id: "d2", clientId: "c1", name: "Maquettes v2.png", type: "PNG", size: "1,8 Mo", sharedAt: "8 juin 2026" },
+  { id: "d3", clientId: "c1", name: "Devis initial.pdf", type: "PDF", size: "180 Ko", sharedAt: "1 juin 2026" },
+  { id: "d4", clientId: "c2", name: "Cahier des charges.docx", type: "DOCX", size: "320 Ko", sharedAt: "9 juin 2026" },
+  { id: "d5", clientId: "c2", name: "Wireframes.zip", type: "ZIP", size: "4,2 Mo", sharedAt: "4 juin 2026" },
+  { id: "d6", clientId: "c3", name: "Logo final.zip", type: "ZIP", size: "6,1 Mo", sharedAt: "2 juin 2026" },
+  { id: "d7", clientId: "c3", name: "Budget détaillé.xlsx", type: "XLSX", size: "96 Ko", sharedAt: "28 mai 2026" },
+  { id: "d8", clientId: "c4", name: "Brief créatif.pdf", type: "PDF", size: "210 Ko", sharedAt: "24 mai 2026" },
+  { id: "d9", clientId: "c6", name: "Specs design system.pdf", type: "PDF", size: "510 Ko", sharedAt: "18 mai 2026" },
+];
+
+export function getClientById(id: string): Client | undefined {
+  return clients.find((client) => client.id === id);
+}
+
+export function getProjectsByClient(clientId: string): Project[] {
+  return projects.filter((project) => project.clientId === clientId);
+}
+
+export function getDocumentsByClient(clientId: string): Document[] {
+  return documents.filter((document) => document.clientId === clientId);
+}
+
+export function getInvoicesByClient(company: string): Invoice[] {
+  return invoices.filter((invoice) => invoice.client === company);
+}

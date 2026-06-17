@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, Mail, Eye, MoreHorizontal, Users } from "lucide-react";
 import type { Client, ClientStatus } from "@/app/lib/mock-data";
 
@@ -103,9 +104,12 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                         {initials(client.name)}
                       </div>
                       <div className="min-w-0">
-                        <p className="truncate font-medium text-gray-900">
+                        <Link
+                          href={`/clients/${client.id}`}
+                          className="block truncate font-medium text-gray-900 hover:underline"
+                        >
                           {client.name}
-                        </p>
+                        </Link>
                         <p className="truncate text-xs text-gray-500">
                           {client.activeProjects} projet
                           {client.activeProjects > 1 ? "s" : ""} actif
@@ -128,13 +132,13 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                   </td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-end gap-1">
-                      <button
-                        type="button"
+                      <Link
+                        href={`/clients/${client.id}`}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Voir ${client.name}`}
                       >
                         <Eye className="h-4 w-4" />
-                      </button>
+                      </Link>
                       <button
                         type="button"
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
