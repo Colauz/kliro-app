@@ -1,3 +1,7 @@
+"use client";
+
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   LayoutDashboard,
   Users,
@@ -8,14 +12,16 @@ import {
 } from "lucide-react";
 
 const navigation = [
-  { name: "Tableau de bord", icon: LayoutDashboard, active: true },
-  { name: "Clients", icon: Users, active: false },
-  { name: "Factures", icon: FileText, active: false },
-  { name: "Documents", icon: FolderOpen, active: false },
-  { name: "Paramètres", icon: Settings, active: false },
+  { name: "Tableau de bord", icon: LayoutDashboard, href: "/" },
+  { name: "Clients", icon: Users, href: "/clients" },
+  { name: "Factures", icon: FileText, href: "/invoices" },
+  { name: "Documents", icon: FolderOpen, href: "/documents" },
+  { name: "Paramètres", icon: Settings, href: "/settings" },
 ];
 
 export default function Sidebar() {
+  const pathname = usePathname();
+
   return (
     <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-white">
       <div className="flex h-16 items-center gap-2 px-6">
@@ -26,20 +32,27 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 px-4 py-4">
-        {navigation.map((item) => (
-          <a
-            key={item.name}
-            href="#"
-            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-              item.active
-                ? "bg-gray-100 text-gray-900"
-                : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
-            }`}
-          >
-            <item.icon className="h-[18px] w-[18px]" strokeWidth={2} />
-            {item.name}
-          </a>
-        ))}
+        {navigation.map((item) => {
+          const isActive =
+            item.href === "/"
+              ? pathname === "/"
+              : pathname.startsWith(item.href);
+
+          return (
+            <Link
+              key={item.name}
+              href={item.href}
+              className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-gray-100 text-gray-900"
+                  : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+              }`}
+            >
+              <item.icon className="h-[18px] w-[18px]" strokeWidth={2} />
+              {item.name}
+            </Link>
+          );
+        })}
       </nav>
 
       <div className="border-t border-gray-200 p-4">

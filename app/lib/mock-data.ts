@@ -8,11 +8,15 @@ export interface Invoice {
   issuedAt: string;
 }
 
+export type ClientStatus = "active" | "pending" | "archived";
+
 export interface Client {
   id: string;
   name: string;
   company: string;
   email: string;
+  phone: string;
+  status: ClientStatus;
   activeProjects: number;
 }
 
@@ -48,10 +52,14 @@ export const invoices: Invoice[] = [
 ];
 
 export const clients: Client[] = [
-  { id: "c1", name: "Camille Roy", company: "Client A", email: "camille@clienta.fr", activeProjects: 2 },
-  { id: "c2", name: "Léo Marchand", company: "Studio Lumen", email: "leo@studiolumen.com", activeProjects: 1 },
-  { id: "c3", name: "Inès Fabre", company: "Atelier Nord", email: "ines@ateliernord.fr", activeProjects: 3 },
-  { id: "c4", name: "Hugo Berger", company: "Maison Vert", email: "hugo@maisonvert.co", activeProjects: 1 },
+  { id: "c1", name: "Camille Roy", company: "Client A", email: "camille@clienta.fr", phone: "+33 6 12 34 56 78", status: "active", activeProjects: 2 },
+  { id: "c2", name: "Léo Marchand", company: "Studio Lumen", email: "leo@studiolumen.com", phone: "+33 6 23 45 67 89", status: "active", activeProjects: 1 },
+  { id: "c3", name: "Inès Fabre", company: "Atelier Nord", email: "ines@ateliernord.fr", phone: "+33 6 34 56 78 90", status: "active", activeProjects: 3 },
+  { id: "c4", name: "Hugo Berger", company: "Maison Vert", email: "hugo@maisonvert.co", phone: "+33 6 45 67 89 01", status: "pending", activeProjects: 1 },
+  { id: "c5", name: "Sofia Lambert", company: "Client B", email: "sofia@clientb.fr", phone: "+33 6 56 78 90 12", status: "pending", activeProjects: 0 },
+  { id: "c6", name: "Nathan Petit", company: "Pixel & Co", email: "nathan@pixelco.io", phone: "+33 6 67 89 01 23", status: "active", activeProjects: 2 },
+  { id: "c7", name: "Awa Diallo", company: "Horizon Studio", email: "awa@horizon.studio", phone: "+33 6 78 90 12 34", status: "archived", activeProjects: 0 },
+  { id: "c8", name: "Théo Garnier", company: "Forme & Sens", email: "theo@formeetsens.fr", phone: "+33 6 89 01 23 45", status: "archived", activeProjects: 0 },
 ];
 
 export const activity: ActivityItem[] = [
