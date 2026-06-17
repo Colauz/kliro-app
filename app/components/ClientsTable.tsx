@@ -2,8 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, Mail, Eye, MoreHorizontal, Users } from "lucide-react";
 import type { Client, ClientStatus } from "@/app/lib/mock-data";
+
+// Avec des données mock, toutes les lignes pointent vers la première fiche.
+const CLIENT_DETAIL_HREF = "/clients/c1";
 
 const statusStyles: Record<ClientStatus, { label: string; className: string }> =
   {
@@ -29,6 +33,7 @@ function initials(name: string) {
 }
 
 export default function ClientsTable({ clients }: { clients: Client[] }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<ClientStatus | "all">("all");
 
@@ -96,7 +101,8 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
               return (
                 <tr
                   key={client.id}
-                  className="border-t border-gray-100 transition-colors hover:bg-gray-50"
+                  onClick={() => router.push(CLIENT_DETAIL_HREF)}
+                  className="cursor-pointer border-t border-gray-100 transition-colors hover:bg-gray-100"
                 >
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-3">
@@ -105,7 +111,8 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                       </div>
                       <div className="min-w-0">
                         <Link
-                          href={`/clients/${client.id}`}
+                          href={CLIENT_DETAIL_HREF}
+                          onClick={(e) => e.stopPropagation()}
                           className="block truncate font-medium text-gray-900 hover:underline"
                         >
                           {client.name}
@@ -133,7 +140,8 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-end gap-1">
                       <Link
-                        href={`/clients/${client.id}`}
+                        href={CLIENT_DETAIL_HREF}
+                        onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Voir ${client.name}`}
                       >
@@ -141,6 +149,7 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                       </Link>
                       <button
                         type="button"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Contacter ${client.name}`}
                       >
@@ -148,6 +157,7 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                       </button>
                       <button
                         type="button"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Plus d'options pour ${client.name}`}
                       >

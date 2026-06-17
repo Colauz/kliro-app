@@ -2,8 +2,12 @@
 
 import { useMemo, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Search, Download, MoreHorizontal, FileText } from "lucide-react";
 import type { Invoice, InvoiceStatus } from "@/app/lib/mock-data";
+
+// Avec des données mock, toutes les lignes pointent vers la première facture.
+const INVOICE_DETAIL_HREF = "/invoices/INV-128";
 
 const statusStyles: Record<InvoiceStatus, { label: string; className: string }> =
   {
@@ -26,6 +30,7 @@ const currency = new Intl.NumberFormat("fr-FR", {
 });
 
 export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
 
@@ -96,11 +101,13 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
               return (
                 <tr
                   key={invoice.id}
-                  className="border-t border-gray-100 transition-colors hover:bg-gray-50"
+                  onClick={() => router.push(INVOICE_DETAIL_HREF)}
+                  className="cursor-pointer border-t border-gray-100 transition-colors hover:bg-gray-100"
                 >
                   <td className="px-5 py-3.5">
                     <Link
-                      href={`/invoices/${invoice.id}`}
+                      href={INVOICE_DETAIL_HREF}
+                      onClick={(e) => e.stopPropagation()}
                       className="font-medium text-gray-900 hover:underline"
                     >
                       {invoice.id}
@@ -124,6 +131,7 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
                     <div className="flex items-center justify-end gap-1">
                       <button
                         type="button"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Télécharger ${invoice.id}`}
                       >
@@ -131,6 +139,7 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
                       </button>
                       <button
                         type="button"
+                        onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Plus d'options pour ${invoice.id}`}
                       >
