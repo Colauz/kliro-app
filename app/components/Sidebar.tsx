@@ -2,29 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  LayoutDashboard,
-  Users,
-  FileText,
-  FolderOpen,
-  Settings,
-  CircleDot,
-  LogOut,
-} from "lucide-react";
-
-const navigation = [
-  { name: "Tableau de bord", icon: LayoutDashboard, href: "/" },
-  { name: "Clients", icon: Users, href: "/clients" },
-  { name: "Factures", icon: FileText, href: "/invoices" },
-  { name: "Documents", icon: FolderOpen, href: "/documents" },
-  { name: "Paramètres", icon: Settings, href: "/settings" },
-];
+import { CircleDot, LogOut } from "lucide-react";
+import { navItems, isNavItemActive } from "@/app/lib/navigation";
 
 export default function Sidebar() {
   const pathname = usePathname();
 
   return (
-    <aside className="hidden lg:flex lg:w-64 lg:flex-col lg:border-r lg:border-gray-200 lg:bg-white">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-gray-200 bg-white md:flex">
       <div className="flex h-16 items-center gap-2 px-6">
         <CircleDot className="h-6 w-6 text-gray-900" strokeWidth={2.2} />
         <span className="text-lg font-semibold tracking-tight text-gray-900">
@@ -33,11 +18,8 @@ export default function Sidebar() {
       </div>
 
       <nav className="flex flex-1 flex-col gap-1 px-4 py-4">
-        {navigation.map((item) => {
-          const isActive =
-            item.href === "/"
-              ? pathname === "/"
-              : pathname.startsWith(item.href);
+        {navItems.map((item) => {
+          const isActive = isNavItemActive(pathname, item.href);
 
           return (
             <Link

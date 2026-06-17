@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Download, Send, Building2, User } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
+import MobileNav from "@/app/components/MobileNav";
 import {
   invoices,
   freelancer,
@@ -59,13 +60,16 @@ export default async function InvoiceDetailPage({
       <div className="flex flex-1 flex-col">
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-4xl space-y-6">
-            <Link
-              href="/invoices"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Retour aux factures
-            </Link>
+            <div className="flex items-center gap-3">
+              <MobileNav />
+              <Link
+                href="/invoices"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Retour aux factures
+              </Link>
+            </div>
 
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-3">

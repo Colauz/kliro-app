@@ -15,6 +15,7 @@ import {
   FolderGit2,
 } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
+import MobileNav from "@/app/components/MobileNav";
 import {
   clients,
   getClientById,
@@ -122,13 +123,16 @@ export default async function ClientDetailPage({
       <div className="flex flex-1 flex-col">
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl space-y-6">
-            <Link
-              href="/clients"
-              className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              Retour aux clients
-            </Link>
+            <div className="flex items-center gap-3">
+              <MobileNav />
+              <Link
+                href="/clients"
+                className="inline-flex items-center gap-1.5 text-sm font-medium text-gray-500 transition-colors hover:text-gray-900"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Retour aux clients
+              </Link>
+            </div>
 
             <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
               <div className="flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between">
