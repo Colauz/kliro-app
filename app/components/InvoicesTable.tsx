@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Search, Download, MoreHorizontal, FileText } from "lucide-react";
 import type { Invoice, InvoiceStatus } from "@/app/lib/mock-data";
 
@@ -97,8 +98,13 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
                   key={invoice.id}
                   className="border-t border-gray-100 transition-colors hover:bg-gray-50"
                 >
-                  <td className="px-5 py-3.5 font-medium text-gray-900">
-                    {invoice.id}
+                  <td className="px-5 py-3.5">
+                    <Link
+                      href={`/invoices/${invoice.id}`}
+                      className="font-medium text-gray-900 hover:underline"
+                    >
+                      {invoice.id}
+                    </Link>
                   </td>
                   <td className="px-5 py-3.5 text-gray-500">{invoice.client}</td>
                   <td className="hidden px-5 py-3.5 text-gray-500 sm:table-cell">

@@ -133,3 +133,57 @@ export function getDocumentsByClient(clientId: string): Document[] {
 export function getInvoicesByClient(company: string): Invoice[] {
   return invoices.filter((invoice) => invoice.client === company);
 }
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  rate: number;
+}
+
+export const TAX_RATE = 0.2;
+
+export const freelancer = {
+  name: "Julie Moreau",
+  activity: "Freelance · Design & Branding",
+  email: "julie@kliro.studio",
+  phone: "+33 6 00 11 22 33",
+  address: "12 rue des Lilas, 75011 Paris, France",
+  siret: "SIRET 902 345 678 00014",
+};
+
+const invoiceLineItems: Record<string, InvoiceLineItem[]> = {
+  "INV-128": [
+    { id: "l1", description: "Refonte de la page d'accueil", quantity: 1, rate: 850 },
+    { id: "l2", description: "Intégration responsive", quantity: 4, rate: 150 },
+  ],
+  "INV-127": [
+    { id: "l1", description: "Maquettes UI (5 écrans)", quantity: 1, rate: 680 },
+    { id: "l2", description: "Itérations de design", quantity: 2, rate: 150 },
+  ],
+  "INV-126": [
+    { id: "l1", description: "Identité visuelle complète", quantity: 1, rate: 1500 },
+    { id: "l2", description: "Déclinaisons supports", quantity: 5, rate: 160 },
+  ],
+};
+
+export function getInvoiceById(id: string): Invoice | undefined {
+  return invoices.find((invoice) => invoice.id === id);
+}
+
+export function getInvoiceLineItems(invoice: Invoice): InvoiceLineItem[] {
+  return (
+    invoiceLineItems[invoice.id] ?? [
+      {
+        id: "l1",
+        description: "Prestation de services",
+        quantity: 1,
+        rate: invoice.amount,
+      },
+    ]
+  );
+}
+
+export function getClientByCompany(company: string): Client | undefined {
+  return clients.find((client) => client.company === company);
+}
