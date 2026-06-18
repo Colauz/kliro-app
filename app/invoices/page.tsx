@@ -1,10 +1,14 @@
+import { FileText } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
 import InvoicesTable from "@/app/components/InvoicesTable";
 import NewInvoiceButton from "@/app/components/NewInvoiceButton";
+import EmptyState from "@/app/components/EmptyState";
 import { invoices } from "@/app/lib/mock-data";
 
 export default function InvoicesPage() {
+  const isEmpty = invoices.length === 0;
+
   return (
     <div className="flex flex-1 bg-gray-50">
       <Sidebar />
@@ -28,7 +32,16 @@ export default function InvoicesPage() {
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
-            <InvoicesTable invoices={invoices} />
+            {isEmpty ? (
+              <EmptyState
+                icon={FileText}
+                title="Aucune facture pour le moment"
+                description="Créez votre première facture pour suivre vos paiements et informer vos clients."
+                actionButton={<NewInvoiceButton variant="empty" />}
+              />
+            ) : (
+              <InvoicesTable invoices={invoices} />
+            )}
           </div>
         </main>
       </div>

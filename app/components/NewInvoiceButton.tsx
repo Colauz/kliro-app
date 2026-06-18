@@ -6,7 +6,11 @@ import Modal from "@/app/components/Modal";
 import { TextField, SelectField } from "@/app/components/form-fields";
 import { clients } from "@/app/lib/mock-data";
 
-export default function NewInvoiceButton() {
+export default function NewInvoiceButton({
+  variant = "header",
+}: {
+  variant?: "header" | "empty";
+}) {
   const [open, setOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -20,10 +24,18 @@ export default function NewInvoiceButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+        className={
+          variant === "empty"
+            ? "inline-flex items-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+            : "inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+        }
       >
         <Plus className="h-4 w-4" strokeWidth={2.2} />
-        <span className="hidden sm:inline">Nouvelle facture</span>
+        {variant === "empty" ? (
+          "Créer votre première facture"
+        ) : (
+          <span className="hidden sm:inline">Nouvelle facture</span>
+        )}
       </button>
 
       <Modal

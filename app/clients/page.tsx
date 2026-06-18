@@ -1,10 +1,17 @@
+import { Users } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
 import ClientsTable from "@/app/components/ClientsTable";
 import NewClientButton from "@/app/components/NewClientButton";
-import { clients } from "@/app/lib/mock-data";
+import EmptyState from "@/app/components/EmptyState";
+import type { Client } from "@/app/lib/mock-data";
+
+// Temporaire : tableau vide pour tester l'état vide.
+const clientsData: Client[] = [];
 
 export default function ClientsPage() {
+  const isEmpty = clientsData.length === 0;
+
   return (
     <div className="flex flex-1 bg-gray-50">
       <Sidebar />
@@ -28,7 +35,16 @@ export default function ClientsPage() {
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl">
-            <ClientsTable clients={clients} />
+            {isEmpty ? (
+              <EmptyState
+                icon={Users}
+                title="Aucun client pour le moment"
+                description="Commencez par ajouter votre premier client pour centraliser vos projets, factures et documents."
+                actionButton={<NewClientButton variant="empty" />}
+              />
+            ) : (
+              <ClientsTable clients={clientsData} />
+            )}
           </div>
         </main>
       </div>
