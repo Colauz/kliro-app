@@ -4,9 +4,11 @@ import MobileNav from "@/app/components/MobileNav";
 import InvoicesTable from "@/app/components/InvoicesTable";
 import NewInvoiceButton from "@/app/components/NewInvoiceButton";
 import EmptyState from "@/app/components/EmptyState";
-import { invoices } from "@/app/lib/mock-data";
+import { getAllInvoices, getAllClients } from "@/app/lib/data";
 
 export default function InvoicesPage() {
+  const invoices = getAllInvoices();
+  const clients = getAllClients();
   const isEmpty = invoices.length === 0;
 
   return (
@@ -34,13 +36,13 @@ export default function InvoicesPage() {
           <div className="mx-auto max-w-6xl">
             {isEmpty ? (
               <EmptyState
-                icon={FileText}
+                icon={<FileText className="h-7 w-7 text-gray-400" strokeWidth={1.5} />}
                 title="Aucune facture pour le moment"
                 description="Créez votre première facture pour suivre vos paiements et informer vos clients."
                 actionButton={<NewInvoiceButton variant="empty" />}
               />
             ) : (
-              <InvoicesTable invoices={invoices} />
+              <InvoicesTable invoices={invoices} clients={clients} />
             )}
           </div>
         </main>

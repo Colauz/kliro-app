@@ -5,36 +5,18 @@ import {
   Download,
   AlertCircle,
   CheckCircle2,
-  FileText,
-  FileSpreadsheet,
-  FileImage,
-  FileArchive,
 } from "lucide-react";
+import { currency, documentIcons } from "@/app/lib/format";
 import {
   freelancer,
   TAX_RATE,
   getClientById,
   getInvoicesByClient,
   getDocumentsByClient,
-  type Document as ClientDocument,
-} from "@/app/lib/mock-data";
+} from "@/app/lib/data";
 
 // Le portail est consulté par un client donné (mock).
 const PORTAL_CLIENT_ID = "c1";
-
-const documentIcons: Record<ClientDocument["type"], typeof FileText> = {
-  PDF: FileText,
-  DOCX: FileText,
-  XLSX: FileSpreadsheet,
-  PNG: FileImage,
-  ZIP: FileArchive,
-};
-
-const currency = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  minimumFractionDigits: 2,
-});
 
 function firstName(name: string) {
   return name.split(" ")[0];
@@ -42,7 +24,7 @@ function firstName(name: string) {
 
 export default function PortalPage() {
   const client = getClientById(PORTAL_CLIENT_ID)!;
-  const invoices = getInvoicesByClient(client.company);
+  const invoices = getInvoicesByClient(client.id);
   const unpaidInvoices = invoices.filter(
     (invoice) => invoice.status !== "paid",
   );
@@ -155,7 +137,7 @@ export default function PortalPage() {
 
         <section>
           <div className="mb-4 flex items-center gap-2">
-            <FileText className="h-4 w-4 text-gray-400" />
+            <AlertCircle className="h-4 w-4 text-gray-400" />
             <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-500">
               Documents partagés
             </h2>

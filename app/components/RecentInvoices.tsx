@@ -3,10 +3,8 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ChevronRight } from "lucide-react";
-import { invoices, type InvoiceStatus } from "@/app/lib/mock-data";
-
-// Avec des données mock, toutes les lignes pointent vers la première facture.
-const INVOICE_DETAIL_HREF = "/invoices/INV-128";
+import { currency } from "@/app/lib/format";
+import { getAllInvoices, getAllClients, type InvoiceStatus } from "@/app/lib/data";
 
 const statusStyles: Record<InvoiceStatus, { label: string; className: string }> =
   {
@@ -15,11 +13,8 @@ const statusStyles: Record<InvoiceStatus, { label: string; className: string }> 
     overdue: { label: "En retard", className: "bg-rose-50 text-rose-700" },
   };
 
-const currency = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  minimumFractionDigits: 0,
-});
+const invoices = getAllInvoices();
+const clientMap = new Map(getAllClients().map((c) => [c.id, c]));
 
 export default function RecentInvoices() {
   const router = useRouter();
@@ -52,22 +47,26 @@ export default function RecentInvoices() {
         <tbody>
           {invoices.map((invoice) => {
             const status = statusStyles[invoice.status];
+            const href = `/invoices/${invoice.id}`;
+            const client = clientMap.get(invoice.clientId);
             return (
               <tr
                 key={invoice.id}
-                onClick={() => router.push(INVOICE_DETAIL_HREF)}
+                onClick={() => router.push(href)}
                 className="cursor-pointer border-t border-gray-100 transition-colors hover:bg-gray-100"
               >
                 <td className="px-5 py-3.5">
                   <Link
-                    href={INVOICE_DETAIL_HREF}
+                    href={href}
                     onClick={(e) => e.stopPropagation()}
                     className="font-medium text-gray-900 hover:underline"
                   >
                     {invoice.id}
                   </Link>
                 </td>
-                <td className="px-5 py-3.5 text-gray-500">{invoice.client}</td>
+                <td className="px-5 py-3.5 text-gray-500">
+                  {client?.company ?? invoice.clientId}
+                </td>
                 <td className="hidden px-5 py-3.5 text-gray-500 sm:table-cell">
                   {invoice.issuedAt}
                 </td>

@@ -9,15 +9,13 @@ import {
   Download,
   FileText,
   FolderOpen,
-  FileSpreadsheet,
-  FileImage,
-  FileArchive,
   FolderGit2,
 } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
+import EmptyState from "@/app/components/EmptyState";
+import { currency, initials, documentIcons } from "@/app/lib/format";
 import {
-  clients,
   getClientById,
   getProjectsByClient,
   getDocumentsByClient,
@@ -25,12 +23,7 @@ import {
   type ClientStatus,
   type ProjectStatus,
   type InvoiceStatus,
-  type Document as ClientDocument,
-} from "@/app/lib/mock-data";
-
-export function generateStaticParams() {
-  return clients.map((client) => ({ id: client.id }));
-}
+} from "@/app/lib/data";
 
 const clientStatusStyles: Record<
   ClientStatus,
@@ -76,29 +69,6 @@ const invoiceStatusStyles: Record<
   overdue: { label: "En retard", className: "bg-rose-50 text-rose-700" },
 };
 
-const documentIcons: Record<ClientDocument["type"], typeof FileText> = {
-  PDF: FileText,
-  DOCX: FileText,
-  XLSX: FileSpreadsheet,
-  PNG: FileImage,
-  ZIP: FileArchive,
-};
-
-const currency = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  minimumFractionDigits: 0,
-});
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
 export default async function ClientDetailPage({
   params,
 }: {
@@ -112,7 +82,7 @@ export default async function ClientDetailPage({
   }
 
   const projects = getProjectsByClient(client.id);
-  const clientInvoices = getInvoicesByClient(client.company);
+  const clientInvoices = getInvoicesByClient(client.id);
   const clientDocuments = getDocumentsByClient(client.id);
   const status = clientStatusStyles[client.status];
 
@@ -249,9 +219,10 @@ export default async function ClientDetailPage({
                     </ul>
                   ) : (
                     <EmptyState
+                      variant="card"
                       icon={<FolderGit2 className="h-5 w-5" />}
                       title="Aucun projet actif"
-                      hint="Ce client n'a pas de projet en cours."
+                      description="Ce client n'a pas de projet en cours."
                     />
                   )}
                 </section>
@@ -310,9 +281,10 @@ export default async function ClientDetailPage({
                     </table>
                   ) : (
                     <EmptyState
+                      variant="card"
                       icon={<FileText className="h-5 w-5" />}
                       title="Aucune facture"
-                      hint="Aucune facture émise pour ce client."
+                      description="Aucune facture émise pour ce client."
                     />
                   )}
                 </section>
@@ -361,9 +333,10 @@ export default async function ClientDetailPage({
                   </ul>
                 ) : (
                   <EmptyState
+                    variant="card"
                     icon={<FolderOpen className="h-5 w-5" />}
                     title="Aucun document"
-                    hint="Aucun fichier partagé avec ce client."
+                    description="Aucun fichier partagé avec ce client."
                   />
                 )}
               </section>
@@ -371,26 +344,6 @@ export default async function ClientDetailPage({
           </div>
         </main>
       </div>
-    </div>
-  );
-}
-
-function EmptyState({
-  icon,
-  title,
-  hint,
-}: {
-  icon: React.ReactNode;
-  title: string;
-  hint: string;
-}) {
-  return (
-    <div className="flex flex-col items-center justify-center gap-2 px-5 py-12 text-center">
-      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400">
-        {icon}
-      </div>
-      <p className="text-sm font-medium text-gray-900">{title}</p>
-      <p className="text-sm text-gray-500">{hint}</p>
     </div>
   );
 }

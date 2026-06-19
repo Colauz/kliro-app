@@ -5,7 +5,7 @@ import {
   FileUp,
   type LucideIcon,
 } from "lucide-react";
-import { activity, type ActivityItem } from "@/app/lib/mock-data";
+import { getAllActivity, type ActivityItem } from "@/app/lib/data";
 
 const icons: Record<ActivityItem["type"], LucideIcon> = {
   invoice_paid: CheckCircle2,
@@ -13,6 +13,8 @@ const icons: Record<ActivityItem["type"], LucideIcon> = {
   client_added: UserPlus,
   document_shared: FileUp,
 };
+
+const activity = getAllActivity();
 
 export default function ActivityFeed() {
   return (

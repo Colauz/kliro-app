@@ -1,18 +1,9 @@
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
-import { clients } from "@/app/lib/mock-data";
+import { initials } from "@/app/lib/format";
+import { getAllClients } from "@/app/lib/data";
 
-// Avec des données mock, toutes les lignes pointent vers la première fiche.
-const CLIENT_DETAIL_HREF = "/clients/c1";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
+const clients = getAllClients();
 
 export default function RecentClients() {
   return (
@@ -32,7 +23,7 @@ export default function RecentClients() {
         {clients.map((client) => (
           <li key={client.id}>
             <Link
-              href={CLIENT_DETAIL_HREF}
+              href={`/clients/${client.id}`}
               className="flex cursor-pointer items-center gap-3 px-5 py-3.5 transition-colors hover:bg-gray-100"
             >
               <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-semibold text-gray-600">

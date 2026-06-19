@@ -4,13 +4,11 @@ import MobileNav from "@/app/components/MobileNav";
 import ClientsTable from "@/app/components/ClientsTable";
 import NewClientButton from "@/app/components/NewClientButton";
 import EmptyState from "@/app/components/EmptyState";
-import type { Client } from "@/app/lib/mock-data";
-
-// Temporaire : tableau vide pour tester l'état vide.
-const clientsData: Client[] = [];
+import { getAllClients } from "@/app/lib/data";
 
 export default function ClientsPage() {
-  const isEmpty = clientsData.length === 0;
+  const clients = getAllClients();
+  const isEmpty = clients.length === 0;
 
   return (
     <div className="flex flex-1 bg-gray-50">
@@ -37,13 +35,13 @@ export default function ClientsPage() {
           <div className="mx-auto max-w-6xl">
             {isEmpty ? (
               <EmptyState
-                icon={Users}
+                icon={<Users className="h-7 w-7 text-gray-400" strokeWidth={1.5} />}
                 title="Aucun client pour le moment"
                 description="Commencez par ajouter votre premier client pour centraliser vos projets, factures et documents."
                 actionButton={<NewClientButton variant="empty" />}
               />
             ) : (
-              <ClientsTable clients={clientsData} />
+              <ClientsTable clients={clients} />
             )}
           </div>
         </main>

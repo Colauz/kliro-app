@@ -4,9 +4,11 @@ import StatCard from "@/app/components/StatCard";
 import RecentInvoices from "@/app/components/RecentInvoices";
 import RecentClients from "@/app/components/RecentClients";
 import ActivityFeed from "@/app/components/ActivityFeed";
-import { stats } from "@/app/lib/mock-data";
+import { getAllStats } from "@/app/lib/data";
 
 export default function Home() {
+  const stats = getAllStats();
+
   return (
     <div className="flex flex-1 bg-gray-50">
       <Sidebar />

@@ -1,52 +1,9 @@
 import { User, Building2, Landmark, Save } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
-import { freelancer } from "@/app/lib/mock-data";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
-
-function Field({
-  id,
-  label,
-  type = "text",
-  defaultValue,
-  placeholder,
-  autoComplete,
-}: {
-  id: string;
-  label: string;
-  type?: string;
-  defaultValue?: string;
-  placeholder?: string;
-  autoComplete?: string;
-}) {
-  return (
-    <div>
-      <label
-        htmlFor={id}
-        className="mb-1.5 block text-sm font-medium text-gray-700"
-      >
-        {label}
-      </label>
-      <input
-        id={id}
-        name={id}
-        type={type}
-        defaultValue={defaultValue}
-        placeholder={placeholder}
-        autoComplete={autoComplete}
-        className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
-      />
-    </div>
-  );
-}
+import { TextField } from "@/app/components/form-fields";
+import { initials } from "@/app/lib/format";
+import { freelancer } from "@/app/lib/data";
 
 function SettingsCard({
   icon,
@@ -130,27 +87,27 @@ export default function SettingsPage() {
               </div>
 
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field
+                <TextField
                   id="fullName"
                   label="Nom complet"
                   defaultValue={freelancer.name}
                   autoComplete="name"
                 />
-                <Field
+                <TextField
                   id="email"
                   label="Email"
                   type="email"
                   defaultValue={freelancer.email}
                   autoComplete="email"
                 />
-                <Field
+                <TextField
                   id="phone"
                   label="Téléphone"
                   type="tel"
                   defaultValue={freelancer.phone}
                   autoComplete="tel"
                 />
-                <Field
+                <TextField
                   id="activity"
                   label="Activité"
                   defaultValue="Design & Branding"
@@ -164,19 +121,19 @@ export default function SettingsPage() {
               description="Informations légales affichées sur vos factures."
             >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <Field
+                <TextField
                   id="companyName"
                   label="Nom de l'entreprise"
                   defaultValue="Studio Moreau"
                   autoComplete="organization"
                 />
-                <Field
+                <TextField
                   id="siret"
                   label="SIRET"
                   defaultValue="902 345 678 00014"
                 />
                 <div className="sm:col-span-2">
-                  <Field
+                  <TextField
                     id="address"
                     label="Adresse complète"
                     defaultValue={freelancer.address}
@@ -193,13 +150,17 @@ export default function SettingsPage() {
             >
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="sm:col-span-2">
-                  <Field
+                  <TextField
                     id="iban"
                     label="IBAN"
                     defaultValue="FR76 3000 4000 0512 3456 7890 143"
                   />
                 </div>
-                <Field id="bic" label="BIC / SWIFT" defaultValue="BNPAFRPPXXX" />
+                <TextField
+                  id="bic"
+                  label="BIC / SWIFT"
+                  defaultValue="BNPAFRPPXXX"
+                />
                 <div>
                   <label
                     htmlFor="currency"

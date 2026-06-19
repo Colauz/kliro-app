@@ -3,19 +3,15 @@ import { notFound } from "next/navigation";
 import { ArrowLeft, Download, Send, Building2, User } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
+import { currency } from "@/app/lib/format";
 import {
-  invoices,
   freelancer,
   TAX_RATE,
   getInvoiceById,
   getInvoiceLineItems,
-  getClientByCompany,
+  getClientById,
   type InvoiceStatus,
-} from "@/app/lib/mock-data";
-
-export function generateStaticParams() {
-  return invoices.map((invoice) => ({ id: invoice.id }));
-}
+} from "@/app/lib/data";
 
 const statusStyles: Record<InvoiceStatus, { label: string; className: string }> =
   {
@@ -23,12 +19,6 @@ const statusStyles: Record<InvoiceStatus, { label: string; className: string }> 
     pending: { label: "En attente", className: "bg-amber-50 text-amber-700" },
     overdue: { label: "En retard", className: "bg-rose-50 text-rose-700" },
   };
-
-const currency = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  minimumFractionDigits: 2,
-});
 
 export default async function InvoiceDetailPage({
   params,
@@ -43,7 +33,7 @@ export default async function InvoiceDetailPage({
   }
 
   const lineItems = getInvoiceLineItems(invoice);
-  const client = getClientByCompany(invoice.client);
+  const client = getClientById(invoice.clientId);
   const status = statusStyles[invoice.status];
 
   const subtotal = lineItems.reduce(
@@ -109,9 +99,9 @@ export default async function InvoiceDetailPage({
                     Facturé à
                   </div>
                   <p className="text-sm font-semibold text-gray-900">
-                    {client?.name ?? invoice.client}
+                    {client?.name ?? invoice.clientId}
                   </p>
-                  <p className="text-sm text-gray-500">{invoice.client}</p>
+                  <p className="text-sm text-gray-500">{client?.company}</p>
                   {client && (
                     <div className="mt-2 space-y-0.5 text-sm text-gray-500">
                       <p>{client.email}</p>

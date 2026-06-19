@@ -4,10 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Download, MoreHorizontal, FileText } from "lucide-react";
-import type { Invoice, InvoiceStatus } from "@/app/lib/mock-data";
-
-// Avec des données mock, toutes les lignes pointent vers la première facture.
-const INVOICE_DETAIL_HREF = "/invoices/INV-128";
+import { currency } from "@/app/lib/format";
+import type { Invoice, Client, InvoiceStatus } from "@/app/lib/data";
 
 const statusStyles: Record<InvoiceStatus, { label: string; className: string }> =
   {
@@ -23,28 +21,35 @@ const filters: { value: InvoiceStatus | "all"; label: string }[] = [
   { value: "overdue", label: "En retard" },
 ];
 
-const currency = new Intl.NumberFormat("fr-FR", {
-  style: "currency",
-  currency: "EUR",
-  minimumFractionDigits: 0,
-});
-
-export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
+export default function InvoicesTable({
+  invoices,
+  clients,
+}: {
+  invoices: Invoice[];
+  clients: Client[];
+}) {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState<InvoiceStatus | "all">("all");
+
+  const clientMap = useMemo(
+    () => new Map(clients.map((c) => [c.id, c])),
+    [clients],
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return invoices.filter((invoice) => {
       const matchesStatus = status === "all" || invoice.status === status;
+      const client = clientMap.get(invoice.clientId);
       const matchesQuery =
         q === "" ||
         invoice.id.toLowerCase().includes(q) ||
-        invoice.client.toLowerCase().includes(q);
+        (client?.company.toLowerCase().includes(q) ?? false) ||
+        (client?.name.toLowerCase().includes(q) ?? false);
       return matchesStatus && matchesQuery;
     });
-  }, [invoices, query, status]);
+  }, [invoices, clientMap, query, status]);
 
   const total = useMemo(
     () => filtered.reduce((sum, invoice) => sum + invoice.amount, 0),
@@ -98,22 +103,26 @@ export default function InvoicesTable({ invoices }: { invoices: Invoice[] }) {
           <tbody>
             {filtered.map((invoice) => {
               const badge = statusStyles[invoice.status];
+              const href = `/invoices/${invoice.id}`;
+              const client = clientMap.get(invoice.clientId);
               return (
                 <tr
                   key={invoice.id}
-                  onClick={() => router.push(INVOICE_DETAIL_HREF)}
+                  onClick={() => router.push(href)}
                   className="cursor-pointer border-t border-gray-100 transition-colors hover:bg-gray-100"
                 >
                   <td className="px-5 py-3.5">
                     <Link
-                      href={INVOICE_DETAIL_HREF}
+                      href={href}
                       onClick={(e) => e.stopPropagation()}
                       className="font-medium text-gray-900 hover:underline"
                     >
                       {invoice.id}
                     </Link>
                   </td>
-                  <td className="px-5 py-3.5 text-gray-500">{invoice.client}</td>
+                  <td className="px-5 py-3.5 text-gray-500">
+                    {client?.company ?? invoice.clientId}
+                  </td>
                   <td className="hidden px-5 py-3.5 text-gray-500 sm:table-cell">
                     {invoice.issuedAt}
                   </td>

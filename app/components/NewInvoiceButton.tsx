@@ -4,7 +4,9 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "@/app/components/Modal";
 import { TextField, SelectField } from "@/app/components/form-fields";
-import { clients } from "@/app/lib/mock-data";
+import { getAllClients } from "@/app/lib/data";
+
+const clients = getAllClients();
 
 export default function NewInvoiceButton({
   variant = "header",
@@ -48,12 +50,12 @@ export default function NewInvoiceButton({
           <div className="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
             <div className="sm:col-span-2">
               <SelectField
-                id="client"
+                id="clientId"
                 label="Client"
-                defaultValue={clients[0]?.company}
+                defaultValue={clients[0]?.id}
               >
                 {clients.map((client) => (
-                  <option key={client.id} value={client.company}>
+                  <option key={client.id} value={client.id}>
                     {client.company} — {client.name}
                   </option>
                 ))}

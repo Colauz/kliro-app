@@ -4,10 +4,8 @@ import { useMemo, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Mail, Eye, MoreHorizontal, Users } from "lucide-react";
-import type { Client, ClientStatus } from "@/app/lib/mock-data";
-
-// Avec des données mock, toutes les lignes pointent vers la première fiche.
-const CLIENT_DETAIL_HREF = "/clients/c1";
+import { initials } from "@/app/lib/format";
+import type { Client, ClientStatus } from "@/app/lib/data";
 
 const statusStyles: Record<ClientStatus, { label: string; className: string }> =
   {
@@ -22,15 +20,6 @@ const filters: { value: ClientStatus | "all"; label: string }[] = [
   { value: "pending", label: "En attente" },
   { value: "archived", label: "Archivés" },
 ];
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .map((part) => part[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-}
 
 export default function ClientsTable({ clients }: { clients: Client[] }) {
   const router = useRouter();
@@ -98,10 +87,11 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
           <tbody>
             {filtered.map((client) => {
               const badge = statusStyles[client.status];
+              const href = `/clients/${client.id}`;
               return (
                 <tr
                   key={client.id}
-                  onClick={() => router.push(CLIENT_DETAIL_HREF)}
+                  onClick={() => router.push(href)}
                   className="cursor-pointer border-t border-gray-100 transition-colors hover:bg-gray-100"
                 >
                   <td className="px-5 py-3.5">
@@ -111,7 +101,7 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                       </div>
                       <div className="min-w-0">
                         <Link
-                          href={CLIENT_DETAIL_HREF}
+                          href={href}
                           onClick={(e) => e.stopPropagation()}
                           className="block truncate font-medium text-gray-900 hover:underline"
                         >
@@ -140,7 +130,7 @@ export default function ClientsTable({ clients }: { clients: Client[] }) {
                   <td className="px-5 py-3.5">
                     <div className="flex items-center justify-end gap-1">
                       <Link
-                        href={CLIENT_DETAIL_HREF}
+                        href={href}
                         onClick={(e) => e.stopPropagation()}
                         className="flex h-8 w-8 items-center justify-center rounded-lg text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-900"
                         aria-label={`Voir ${client.name}`}

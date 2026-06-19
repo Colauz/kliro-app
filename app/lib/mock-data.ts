@@ -2,7 +2,7 @@ export type InvoiceStatus = "paid" | "pending" | "overdue";
 
 export interface Invoice {
   id: string;
-  client: string;
+  clientId: string;
   amount: number;
   status: InvoiceStatus;
   issuedAt: string;
@@ -44,16 +44,16 @@ export const stats: Stat[] = [
 ];
 
 export const invoices: Invoice[] = [
-  { id: "INV-128", client: "Client A", amount: 1450, status: "paid", issuedAt: "12 juin 2026" },
-  { id: "INV-127", client: "Studio Lumen", amount: 980, status: "pending", issuedAt: "9 juin 2026" },
-  { id: "INV-126", client: "Atelier Nord", amount: 2300, status: "paid", issuedAt: "5 juin 2026" },
-  { id: "INV-125", client: "Client B", amount: 690, status: "overdue", issuedAt: "28 mai 2026" },
-  { id: "INV-124", client: "Maison Vert", amount: 1150, status: "pending", issuedAt: "24 mai 2026" },
-  { id: "INV-123", client: "Pixel & Co", amount: 3200, status: "paid", issuedAt: "18 mai 2026" },
-  { id: "INV-122", client: "Horizon Studio", amount: 540, status: "paid", issuedAt: "11 mai 2026" },
-  { id: "INV-121", client: "Client A", amount: 1450, status: "overdue", issuedAt: "2 mai 2026" },
-  { id: "INV-120", client: "Forme & Sens", amount: 820, status: "paid", issuedAt: "26 avr. 2026" },
-  { id: "INV-119", client: "Studio Lumen", amount: 1760, status: "pending", issuedAt: "19 avr. 2026" },
+  { id: "INV-128", clientId: "c1", amount: 1450, status: "paid", issuedAt: "12 juin 2026" },
+  { id: "INV-127", clientId: "c2", amount: 980, status: "pending", issuedAt: "9 juin 2026" },
+  { id: "INV-126", clientId: "c3", amount: 2300, status: "paid", issuedAt: "5 juin 2026" },
+  { id: "INV-125", clientId: "c5", amount: 690, status: "overdue", issuedAt: "28 mai 2026" },
+  { id: "INV-124", clientId: "c4", amount: 1150, status: "pending", issuedAt: "24 mai 2026" },
+  { id: "INV-123", clientId: "c6", amount: 3200, status: "paid", issuedAt: "18 mai 2026" },
+  { id: "INV-122", clientId: "c7", amount: 540, status: "paid", issuedAt: "11 mai 2026" },
+  { id: "INV-121", clientId: "c1", amount: 1450, status: "overdue", issuedAt: "2 mai 2026" },
+  { id: "INV-120", clientId: "c8", amount: 820, status: "paid", issuedAt: "26 avr. 2026" },
+  { id: "INV-119", clientId: "c2", amount: 1760, status: "pending", issuedAt: "19 avr. 2026" },
 ];
 
 export const clients: Client[] = [
@@ -130,8 +130,8 @@ export function getDocumentsByClient(clientId: string): Document[] {
   return documents.filter((document) => document.clientId === clientId);
 }
 
-export function getInvoicesByClient(company: string): Invoice[] {
-  return invoices.filter((invoice) => invoice.client === company);
+export function getInvoicesByClient(clientId: string): Invoice[] {
+  return invoices.filter((invoice) => invoice.clientId === clientId);
 }
 
 export interface InvoiceLineItem {
@@ -184,6 +184,3 @@ export function getInvoiceLineItems(invoice: Invoice): InvoiceLineItem[] {
   );
 }
 
-export function getClientByCompany(company: string): Client | undefined {
-  return clients.find((client) => client.company === company);
-}
