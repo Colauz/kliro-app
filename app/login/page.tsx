@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useActionState } from "react";
 import { Mail, Lock, ArrowRight } from "lucide-react";
+import { signIn } from "@/app/lib/actions/auth";
 
 function GithubIcon({ className }: { className?: string }) {
   return (
@@ -18,13 +19,7 @@ function GithubIcon({ className }: { className?: string }) {
 }
 
 export default function LoginPage() {
-  const router = useRouter();
-
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    // Mock : pas d'authentification réelle, on redirige vers le tableau de bord.
-    router.push("/");
-  };
+  const [state, action, pending] = useActionState(signIn, { error: null });
 
   return (
     <div className="flex min-h-screen flex-1 items-center justify-center bg-gray-50 px-4 py-12">
@@ -42,7 +37,13 @@ export default function LoginPage() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form action={action} className="space-y-4">
+            {state.error && (
+              <p className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {state.error}
+              </p>
+            )}
+
             <div>
               <label
                 htmlFor="email"
@@ -57,6 +58,7 @@ export default function LoginPage() {
                   name="email"
                   type="email"
                   autoComplete="email"
+                  required
                   placeholder="vous@exemple.com"
                   className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
@@ -85,6 +87,7 @@ export default function LoginPage() {
                   name="password"
                   type="password"
                   autoComplete="current-password"
+                  required
                   placeholder="••••••••"
                   className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-9 pr-3 text-sm text-gray-900 placeholder:text-gray-400 transition focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
                 />
@@ -93,10 +96,11 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-800"
+              disabled={pending}
+              className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-gray-900 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-gray-800 disabled:opacity-60"
             >
-              Se connecter
-              <ArrowRight className="h-4 w-4" strokeWidth={2.2} />
+              {pending ? "Connexion..." : "Se connecter"}
+              {!pending && <ArrowRight className="h-4 w-4" strokeWidth={2.2} />}
             </button>
           </form>
 

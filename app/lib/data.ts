@@ -1,4 +1,4 @@
-import { supabase } from "./supabase";
+import { createClient } from "./supabase/server";
 
 export type InvoiceStatus = "paid" | "pending" | "overdue";
 export type ClientStatus = "active" | "pending" | "archived";
@@ -99,12 +99,14 @@ function rowToInvoice(row: any): Invoice {
 }
 
 export async function getAllClients(): Promise<Client[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase.from("clients").select("*");
   if (error || !data) return [];
   return data.map(rowToClient);
 }
 
 export async function getAllInvoices(): Promise<Invoice[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase.from("invoices").select("*");
   if (error || !data) return [];
   return data.map(rowToInvoice);
@@ -119,6 +121,7 @@ export async function getAllActivity(): Promise<ActivityItem[]> {
 }
 
 export async function getClientById(id: string): Promise<Client | undefined> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("clients")
     .select("*")
@@ -129,6 +132,7 @@ export async function getClientById(id: string): Promise<Client | undefined> {
 }
 
 export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("invoices")
     .select("*")
@@ -139,6 +143,7 @@ export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
 }
 
 export async function getInvoicesByClient(clientId: string): Promise<Invoice[]> {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("invoices")
     .select("*")
