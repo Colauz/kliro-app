@@ -1,7 +1,9 @@
-import { Search, Plus, Bell } from "lucide-react";
+import { Search, Bell } from "lucide-react";
 import MobileNav from "@/app/components/MobileNav";
+import NewInvoiceButton from "@/app/components/NewInvoiceButton";
+import type { Client } from "@/app/lib/data";
 
-export default function Topbar() {
+export default function Topbar({ clients = [] }: { clients?: Client[] }) {
   return (
     <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b border-gray-200 bg-gray-50/80 px-4 backdrop-blur-sm sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
@@ -35,13 +37,7 @@ export default function Topbar() {
           <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-gray-900" />
         </button>
 
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-lg bg-gray-900 px-3 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
-        >
-          <Plus className="h-4 w-4" strokeWidth={2.2} />
-          <span className="hidden sm:inline">Nouvelle facture</span>
-        </button>
+        <NewInvoiceButton clients={clients} />
       </div>
     </header>
   );

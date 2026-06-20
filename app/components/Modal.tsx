@@ -36,7 +36,7 @@ export default function Modal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
-        className="absolute inset-0 bg-black/20 backdrop-blur-sm"
+        className="animate-overlay-in absolute inset-0 bg-black/20 backdrop-blur-sm"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -45,7 +45,7 @@ export default function Modal({
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className="relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
+        className="animate-modal-in relative z-10 w-full max-w-md overflow-hidden rounded-2xl border border-gray-200 bg-white shadow-xl"
       >
         <div className="flex items-start justify-between gap-4 border-b border-gray-200 px-6 py-4">
           <div>

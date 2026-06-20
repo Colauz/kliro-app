@@ -26,14 +26,16 @@ export default async function InvoiceDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const invoice = getInvoiceById(id);
+  const invoice = await getInvoiceById(id);
 
   if (!invoice) {
     notFound();
   }
 
-  const lineItems = getInvoiceLineItems(invoice);
-  const client = getClientById(invoice.clientId);
+  const [lineItems, client] = await Promise.all([
+    getInvoiceLineItems(invoice),
+    getClientById(invoice.clientId),
+  ]);
   const status = statusStyles[invoice.status];
 
   const subtotal = lineItems.reduce(

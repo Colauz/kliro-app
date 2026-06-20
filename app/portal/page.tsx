@@ -15,20 +15,22 @@ import {
   getDocumentsByClient,
 } from "@/app/lib/data";
 
-// Le portail est consulté par un client donné (mock).
 const PORTAL_CLIENT_ID = "c1";
 
 function firstName(name: string) {
   return name.split(" ")[0];
 }
 
-export default function PortalPage() {
-  const client = getClientById(PORTAL_CLIENT_ID)!;
-  const invoices = getInvoicesByClient(client.id);
+export default async function PortalPage() {
+  const client = await getClientById(PORTAL_CLIENT_ID);
+  if (!client) return null;
+  const [invoices, documents] = await Promise.all([
+    getInvoicesByClient(client.id),
+    getDocumentsByClient(client.id),
+  ]);
   const unpaidInvoices = invoices.filter(
     (invoice) => invoice.status !== "paid",
   );
-  const documents = getDocumentsByClient(client.id);
 
   return (
     <div className="flex min-h-screen flex-1 flex-col bg-gray-50">

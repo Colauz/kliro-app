@@ -5,7 +5,7 @@ import {
   FileArchive,
   type LucideIcon,
 } from "lucide-react";
-import type { Document } from "./mock-data";
+import type { Document } from "./data";
 
 export const currency = new Intl.NumberFormat("fr-FR", {
   style: "currency",

@@ -1,5 +1,5 @@
 import { ArrowUpRight, ArrowDownRight } from "lucide-react";
-import type { Stat } from "@/app/lib/mock-data";
+import type { Stat } from "@/app/lib/data";
 
 export default function StatCard({ stat }: { stat: Stat }) {
   const isUp = stat.trend === "up";

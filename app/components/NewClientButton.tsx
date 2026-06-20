@@ -14,7 +14,6 @@ export default function NewClientButton({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Comportement mock : on ferme simplement le panneau pour l'instant.
     setOpen(false);
   };
 

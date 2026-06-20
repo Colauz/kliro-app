@@ -4,20 +4,19 @@ import { useState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "@/app/components/Modal";
 import { TextField, SelectField } from "@/app/components/form-fields";
-import { getAllClients } from "@/app/lib/data";
-
-const clients = getAllClients();
+import { type Client } from "@/app/lib/data";
 
 export default function NewInvoiceButton({
   variant = "header",
+  clients = [],
 }: {
   variant?: "header" | "empty";
+  clients?: Client[];
 }) {
   const [open, setOpen] = useState(false);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // Comportement mock : on ferme simplement le panneau pour l'instant.
     setOpen(false);
   };
 

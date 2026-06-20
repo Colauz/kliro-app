@@ -75,15 +75,17 @@ export default async function ClientDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const client = getClientById(id);
+  const client = await getClientById(id);
 
   if (!client) {
     notFound();
   }
 
-  const projects = getProjectsByClient(client.id);
-  const clientInvoices = getInvoicesByClient(client.id);
-  const clientDocuments = getDocumentsByClient(client.id);
+  const [projects, clientInvoices, clientDocuments] = await Promise.all([
+    getProjectsByClient(client.id),
+    getInvoicesByClient(client.id),
+    getDocumentsByClient(client.id),
+  ]);
   const status = clientStatusStyles[client.status];
 
   return (

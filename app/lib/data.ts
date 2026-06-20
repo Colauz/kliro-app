@@ -1,79 +1,167 @@
-// Query layer — replace each function body with an async Supabase call when ready.
+import { supabase } from "./supabase";
 
-import {
-  clients,
-  invoices,
-  stats,
-  activity,
-  getClientById as _getClientById,
-  getInvoiceById as _getInvoiceById,
-  getInvoicesByClient as _getInvoicesByClient,
-  getProjectsByClient as _getProjectsByClient,
-  getDocumentsByClient as _getDocumentsByClient,
-  getInvoiceLineItems as _getInvoiceLineItems,
-  type Client,
-  type Invoice,
-  type Project,
-  type Document,
-  type Stat,
-  type ActivityItem,
-  type InvoiceLineItem,
-  type InvoiceStatus,
-  type ClientStatus,
-  type ProjectStatus,
-} from "./mock-data";
+export type InvoiceStatus = "paid" | "pending" | "overdue";
+export type ClientStatus = "active" | "pending" | "archived";
+export type ProjectStatus = "in_progress" | "review" | "completed" | "on_hold";
 
-export type {
-  Client,
-  Invoice,
-  Project,
-  Document,
-  Stat,
-  ActivityItem,
-  InvoiceLineItem,
-  InvoiceStatus,
-  ClientStatus,
-  ProjectStatus,
+export interface Client {
+  id: string;
+  name: string;
+  company: string;
+  email: string;
+  phone: string;
+  status: ClientStatus;
+  activeProjects: number;
+}
+
+export interface Invoice {
+  id: string;
+  clientId: string;
+  amount: number;
+  status: InvoiceStatus;
+  issuedAt: string;
+}
+
+export interface Project {
+  id: string;
+  clientId: string;
+  name: string;
+  status: ProjectStatus;
+  progress: number;
+  dueDate: string;
+}
+
+export interface Document {
+  id: string;
+  clientId: string;
+  name: string;
+  type: "PDF" | "DOCX" | "XLSX" | "PNG" | "ZIP";
+  size: string;
+  sharedAt: string;
+}
+
+export interface Stat {
+  id: string;
+  label: string;
+  value: string;
+  change: string;
+  trend: "up" | "down";
+}
+
+export interface ActivityItem {
+  id: string;
+  type: "invoice_paid" | "invoice_sent" | "client_added" | "document_shared";
+  label: string;
+  detail: string;
+  time: string;
+}
+
+export interface InvoiceLineItem {
+  id: string;
+  description: string;
+  quantity: number;
+  rate: number;
+}
+
+export const TAX_RATE = 0.2;
+
+export const freelancer = {
+  name: "Julie Moreau",
+  activity: "Freelance · Design & Branding",
+  email: "julie@kliro.studio",
+  phone: "+33 6 00 11 22 33",
+  address: "12 rue des Lilas, 75011 Paris, France",
+  siret: "SIRET 902 345 678 00014",
 };
 
-export { freelancer, TAX_RATE } from "./mock-data";
-
-export function getAllClients(): Client[] {
-  return clients;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToClient(row: any): Client {
+  return {
+    id: row.id,
+    name: row.name,
+    company: row.company,
+    email: row.email,
+    phone: row.phone,
+    status: row.status as ClientStatus,
+    activeProjects: row.active_projects ?? row.activeProjects ?? 0,
+  };
 }
 
-export function getAllInvoices(): Invoice[] {
-  return invoices;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToInvoice(row: any): Invoice {
+  return {
+    id: row.id,
+    clientId: row.client_id ?? row.clientId ?? "",
+    amount: row.amount,
+    status: row.status as InvoiceStatus,
+    issuedAt: row.issued_at ?? row.issuedAt ?? "",
+  };
 }
 
-export function getAllStats(): Stat[] {
-  return stats;
+export async function getAllClients(): Promise<Client[]> {
+  const { data, error } = await supabase.from("clients").select("*");
+  if (error || !data) return [];
+  return data.map(rowToClient);
 }
 
-export function getAllActivity(): ActivityItem[] {
-  return activity;
+export async function getAllInvoices(): Promise<Invoice[]> {
+  const { data, error } = await supabase.from("invoices").select("*");
+  if (error || !data) return [];
+  return data.map(rowToInvoice);
 }
 
-export function getClientById(id: string): Client | undefined {
-  return _getClientById(id);
+export async function getAllStats(): Promise<Stat[]> {
+  return [];
 }
 
-export function getInvoiceById(id: string): Invoice | undefined {
-  return _getInvoiceById(id);
+export async function getAllActivity(): Promise<ActivityItem[]> {
+  return [];
 }
 
-export function getInvoicesByClient(clientId: string): Invoice[] {
-  return _getInvoicesByClient(clientId);
+export async function getClientById(id: string): Promise<Client | undefined> {
+  const { data, error } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return undefined;
+  return rowToClient(data);
 }
 
-export function getProjectsByClient(clientId: string): Project[] {
-  return _getProjectsByClient(clientId);
+export async function getInvoiceById(id: string): Promise<Invoice | undefined> {
+  const { data, error } = await supabase
+    .from("invoices")
+    .select("*")
+    .eq("id", id)
+    .single();
+  if (error || !data) return undefined;
+  return rowToInvoice(data);
 }
 
-export function getDocumentsByClient(clientId: string): Document[] {
-  return _getDocumentsByClient(clientId);
+export async function getInvoicesByClient(clientId: string): Promise<Invoice[]> {
+  const { data, error } = await supabase
+    .from("invoices")
+    .select("*")
+    .eq("client_id", clientId);
+  if (error || !data) return [];
+  return data.map(rowToInvoice);
 }
 
-export function getInvoiceLineItems(invoice: Invoice): InvoiceLineItem[] {
-  return _getInvoiceLineItems(invoice);
+export async function getProjectsByClient(_clientId: string): Promise<Project[]> {
+  return [];
+}
+
+export async function getDocumentsByClient(_clientId: string): Promise<Document[]> {
+  return [];
+}
+
+export async function getInvoiceLineItems(invoice: Invoice): Promise<InvoiceLineItem[]> {
+  return [
+    {
+      id: "l1",
+      description: "Prestation de services",
+      quantity: 1,
+      rate: invoice.amount,
+    },
+  ];
 }

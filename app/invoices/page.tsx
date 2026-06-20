@@ -6,9 +6,11 @@ import NewInvoiceButton from "@/app/components/NewInvoiceButton";
 import EmptyState from "@/app/components/EmptyState";
 import { getAllInvoices, getAllClients } from "@/app/lib/data";
 
-export default function InvoicesPage() {
-  const invoices = getAllInvoices();
-  const clients = getAllClients();
+export default async function InvoicesPage() {
+  const [invoices, clients] = await Promise.all([
+    getAllInvoices(),
+    getAllClients(),
+  ]);
   const isEmpty = invoices.length === 0;
 
   return (
@@ -29,7 +31,7 @@ export default function InvoicesPage() {
             </div>
           </div>
 
-          <NewInvoiceButton />
+          <NewInvoiceButton clients={clients} />
         </header>
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
@@ -39,7 +41,7 @@ export default function InvoicesPage() {
                 icon={<FileText className="h-7 w-7 text-gray-400" strokeWidth={1.5} />}
                 title="Aucune facture pour le moment"
                 description="Créez votre première facture pour suivre vos paiements et informer vos clients."
-                actionButton={<NewInvoiceButton variant="empty" />}
+                actionButton={<NewInvoiceButton variant="empty" clients={clients} />}
               />
             ) : (
               <InvoicesTable invoices={invoices} clients={clients} />

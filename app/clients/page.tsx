@@ -6,8 +6,8 @@ import NewClientButton from "@/app/components/NewClientButton";
 import EmptyState from "@/app/components/EmptyState";
 import { getAllClients } from "@/app/lib/data";
 
-export default function ClientsPage() {
-  const clients = getAllClients();
+export default async function ClientsPage() {
+  const clients = await getAllClients();
   const isEmpty = clients.length === 0;
 
   return (

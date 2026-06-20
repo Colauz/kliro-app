@@ -4,17 +4,21 @@ import StatCard from "@/app/components/StatCard";
 import RecentInvoices from "@/app/components/RecentInvoices";
 import RecentClients from "@/app/components/RecentClients";
 import ActivityFeed from "@/app/components/ActivityFeed";
-import { getAllStats } from "@/app/lib/data";
+import { getAllStats, getAllInvoices, getAllClients } from "@/app/lib/data";
 
-export default function Home() {
-  const stats = getAllStats();
+export default async function Home() {
+  const [stats, invoices, clients] = await Promise.all([
+    getAllStats(),
+    getAllInvoices(),
+    getAllClients(),
+  ]);
 
   return (
     <div className="flex flex-1 bg-gray-50">
       <Sidebar />
 
       <div className="flex flex-1 flex-col">
-        <Topbar />
+        <Topbar clients={clients} />
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-6xl space-y-6">
@@ -26,7 +30,7 @@ export default function Home() {
 
             <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
               <div className="lg:col-span-2">
-                <RecentInvoices />
+                <RecentInvoices invoices={invoices} clients={clients} />
               </div>
               <div className="space-y-6">
                 <RecentClients />
