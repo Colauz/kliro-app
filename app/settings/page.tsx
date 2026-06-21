@@ -1,9 +1,10 @@
-import { User, Building2, Landmark, Save } from "lucide-react";
+import { User, Building2, Landmark, Save, CheckCircle2 } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
 import { TextField } from "@/app/components/form-fields";
 import { initials } from "@/app/lib/format";
-import { freelancer } from "@/app/lib/data";
+import { getProfile } from "@/app/lib/data";
+import { saveProfile } from "@/app/lib/actions/settings";
 
 function SettingsCard({
   icon,
@@ -32,7 +33,16 @@ function SettingsCard({
   );
 }
 
-export default function SettingsPage() {
+export default async function SettingsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ saved?: string }>;
+}) {
+  const [{ saved }, profile] = await Promise.all([
+    searchParams,
+    getProfile(),
+  ]);
+
   return (
     <div className="flex flex-1 bg-gray-50">
       <Sidebar />
@@ -63,7 +73,18 @@ export default function SettingsPage() {
         </header>
 
         <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
-          <form id="settings-form" className="mx-auto max-w-3xl space-y-6">
+          <form
+            id="settings-form"
+            action={saveProfile}
+            className="mx-auto max-w-3xl space-y-6"
+          >
+            {saved === "1" && (
+              <div className="flex items-center gap-2 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-700">
+                <CheckCircle2 className="h-4 w-4 shrink-0" />
+                Vos paramètres ont été enregistrés.
+              </div>
+            )}
+
             <SettingsCard
               icon={<User className="h-4 w-4" />}
               title="Profil personnel"
@@ -71,7 +92,7 @@ export default function SettingsPage() {
             >
               <div className="mb-6 flex items-center gap-4">
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gray-900 text-xl font-semibold text-white">
-                  {initials(freelancer.name)}
+                  {profile.name ? initials(profile.name) : "?"}
                 </div>
                 <div>
                   <button
@@ -90,27 +111,27 @@ export default function SettingsPage() {
                 <TextField
                   id="fullName"
                   label="Nom complet"
-                  defaultValue={freelancer.name}
+                  defaultValue={profile.name}
                   autoComplete="name"
                 />
                 <TextField
                   id="email"
                   label="Email"
                   type="email"
-                  defaultValue={freelancer.email}
+                  defaultValue={profile.email}
                   autoComplete="email"
                 />
                 <TextField
                   id="phone"
                   label="Téléphone"
                   type="tel"
-                  defaultValue={freelancer.phone}
+                  defaultValue={profile.phone}
                   autoComplete="tel"
                 />
                 <TextField
                   id="activity"
                   label="Activité"
-                  defaultValue="Design & Branding"
+                  defaultValue={profile.activity}
                 />
               </div>
             </SettingsCard>
@@ -124,19 +145,19 @@ export default function SettingsPage() {
                 <TextField
                   id="companyName"
                   label="Nom de l'entreprise"
-                  defaultValue="Studio Moreau"
+                  defaultValue={profile.companyName}
                   autoComplete="organization"
                 />
                 <TextField
                   id="siret"
                   label="SIRET"
-                  defaultValue="902 345 678 00014"
+                  defaultValue={profile.siret}
                 />
                 <div className="sm:col-span-2">
                   <TextField
                     id="address"
                     label="Adresse complète"
-                    defaultValue={freelancer.address}
+                    defaultValue={profile.address}
                     autoComplete="street-address"
                   />
                 </div>
@@ -153,13 +174,13 @@ export default function SettingsPage() {
                   <TextField
                     id="iban"
                     label="IBAN"
-                    defaultValue="FR76 3000 4000 0512 3456 7890 143"
+                    defaultValue={profile.iban}
                   />
                 </div>
                 <TextField
                   id="bic"
                   label="BIC / SWIFT"
-                  defaultValue="BNPAFRPPXXX"
+                  defaultValue={profile.bic}
                 />
                 <div>
                   <label
@@ -171,7 +192,7 @@ export default function SettingsPage() {
                   <select
                     id="currency"
                     name="currency"
-                    defaultValue="EUR"
+                    defaultValue={profile.currency}
                     className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2.5 text-sm text-gray-900 transition focus:border-gray-900 focus:outline-none focus:ring-2 focus:ring-gray-900"
                   >
                     <option value="EUR">EUR — Euro (€)</option>

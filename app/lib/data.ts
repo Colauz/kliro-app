@@ -56,6 +56,24 @@ export interface ActivityItem {
   time: string;
 }
 
+export interface Profile {
+  name: string;
+  email: string;
+  phone: string;
+  activity: string;
+  companyName: string;
+  address: string;
+  siret: string;
+  iban: string;
+  bic: string;
+  currency: string;
+}
+
+export interface DocumentWithClient extends Document {
+  clientName: string;
+  clientCompany: string;
+}
+
 export interface InvoiceLineItem {
   id: string;
   description: string;
@@ -84,6 +102,30 @@ function rowToClient(row: any): Client {
     phone: row.phone,
     status: row.status as ClientStatus,
     activeProjects: row.active_projects ?? row.activeProjects ?? 0,
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToProject(row: any): Project {
+  return {
+    id: row.id,
+    clientId: row.client_id,
+    name: row.name,
+    status: row.status as ProjectStatus,
+    progress: row.progress,
+    dueDate: row.due_date ?? "",
+  };
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function rowToDocument(row: any): Document {
+  return {
+    id: row.id,
+    clientId: row.client_id,
+    name: row.name,
+    type: row.type as Document["type"],
+    size: row.size ?? "",
+    sharedAt: row.shared_at ?? "",
   };
 }
 
@@ -210,12 +252,83 @@ export async function getInvoicesByClient(clientId: string): Promise<Invoice[]> 
   return data.map(rowToInvoice);
 }
 
-export async function getProjectsByClient(_clientId: string): Promise<Project[]> {
-  return [];
+export async function getProjectsByClient(clientId: string): Promise<Project[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("client_id", clientId);
+  if (error || !data) return [];
+  return data.map(rowToProject);
 }
 
-export async function getDocumentsByClient(_clientId: string): Promise<Document[]> {
-  return [];
+export async function getDocumentsByClient(clientId: string): Promise<Document[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*")
+    .eq("client_id", clientId)
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map(rowToDocument);
+}
+
+export async function getAllDocuments(): Promise<DocumentWithClient[]> {
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("documents")
+    .select("*, clients(name, company)")
+    .order("created_at", { ascending: false });
+  if (error || !data) return [];
+  return data.map((row) => ({
+    ...rowToDocument(row),
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    clientName: (row.clients as any)?.name ?? "",
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    clientCompany: (row.clients as any)?.company ?? "",
+  }));
+}
+
+const defaultProfile: Profile = {
+  name: "",
+  email: "",
+  phone: "",
+  activity: "",
+  companyName: "",
+  address: "",
+  siret: "",
+  iban: "",
+  bic: "",
+  currency: "EUR",
+};
+
+export async function getProfile(): Promise<Profile> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return defaultProfile;
+
+  const { data } = await supabase
+    .from("profiles")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+
+  if (!data) return { ...defaultProfile, email: user.email ?? "" };
+
+  return {
+    name: data.name ?? "",
+    email: data.email || user.email || "",
+    phone: data.phone ?? "",
+    activity: data.activity ?? "",
+    companyName: data.company_name ?? "",
+    address: data.address ?? "",
+    siret: data.siret ?? "",
+    iban: data.iban ?? "",
+    bic: data.bic ?? "",
+    currency: data.currency ?? "EUR",
+  };
 }
 
 export async function getInvoiceLineItems(invoice: Invoice): Promise<InvoiceLineItem[]> {
