@@ -22,7 +22,7 @@ export async function signIn(
     return { error: "Identifiants incorrects. Veuillez réessayer." };
   }
 
-  redirect("/dashboard");
+  redirect("/");
 }
 
 export async function signUp(
@@ -40,7 +40,7 @@ export async function signUp(
     return { error: error.message };
   }
 
-  redirect("/dashboard");
+  redirect("/");
 }
 
 export async function signOut(): Promise<void> {

@@ -113,7 +113,65 @@ export async function getAllInvoices(): Promise<Invoice[]> {
 }
 
 export async function getAllStats(): Promise<Stat[]> {
-  return [];
+  const supabase = await createClient();
+
+  const EUR = new Intl.NumberFormat("fr-FR", {
+    style: "currency",
+    currency: "EUR",
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  });
+
+  const [
+    { data: invoicesData },
+    { count: activeClients },
+  ] = await Promise.all([
+    supabase.from("invoices").select("amount, status"),
+    supabase
+      .from("clients")
+      .select("*", { count: "exact", head: true })
+      .eq("status", "active"),
+  ]);
+
+  const invoices = invoicesData ?? [];
+  const revenue = invoices
+    .filter((i) => i.status === "paid")
+    .reduce((sum, i) => sum + Number(i.amount), 0);
+  const pending = invoices
+    .filter((i) => i.status === "pending" || i.status === "overdue")
+    .reduce((sum, i) => sum + Number(i.amount), 0);
+  const overdueCount = invoices.filter((i) => i.status === "overdue").length;
+
+  return [
+    {
+      id: "revenue",
+      label: "Revenus encaissés",
+      value: EUR.format(revenue),
+      change: "",
+      trend: "up",
+    },
+    {
+      id: "pending",
+      label: "En attente de paiement",
+      value: EUR.format(pending),
+      change: "",
+      trend: pending > 0 ? "down" : "up",
+    },
+    {
+      id: "clients",
+      label: "Clients actifs",
+      value: String(activeClients ?? 0),
+      change: "",
+      trend: "up",
+    },
+    {
+      id: "overdue",
+      label: "Factures en retard",
+      value: String(overdueCount),
+      change: "",
+      trend: overdueCount > 0 ? "down" : "up",
+    },
+  ];
 }
 
 export async function getAllActivity(): Promise<ActivityItem[]> {

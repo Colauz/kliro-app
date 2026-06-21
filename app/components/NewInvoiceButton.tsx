@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "@/app/components/Modal";
 import { TextField, SelectField } from "@/app/components/form-fields";
+import { addInvoice } from "@/app/lib/actions/invoices";
 import { type Client } from "@/app/lib/data";
 
 export default function NewInvoiceButton({
@@ -14,11 +15,16 @@ export default function NewInvoiceButton({
   clients?: Client[];
 }) {
   const [open, setOpen] = useState(false);
+  const [state, formAction, pending] = useActionState(addInvoice, {
+    error: null,
+    success: false,
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setOpen(false);
-  };
+  useEffect(() => {
+    if (state.success) setOpen(false);
+  }, [state]);
+
+  const today = new Date().toISOString().split("T")[0];
 
   return (
     <>
@@ -45,8 +51,13 @@ export default function NewInvoiceButton({
         title="Nouvelle facture"
         description="Créez une facture pour l'un de vos clients."
       >
-        <form onSubmit={handleSubmit}>
+        <form action={formAction}>
           <div className="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+            {state.error && (
+              <p className="sm:col-span-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {state.error}
+              </p>
+            )}
             <div className="sm:col-span-2">
               <SelectField
                 id="clientId"
@@ -60,7 +71,12 @@ export default function NewInvoiceButton({
                 ))}
               </SelectField>
             </div>
-            <TextField id="date" label="Date d'émission" type="date" />
+            <TextField
+              id="date"
+              label="Date d'émission"
+              type="date"
+              defaultValue={today}
+            />
             <TextField
               id="amount"
               label="Montant (HT)"
@@ -86,9 +102,10 @@ export default function NewInvoiceButton({
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+              disabled={pending}
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800 disabled:opacity-60"
             >
-              Créer la facture
+              {pending ? "Création..." : "Créer la facture"}
             </button>
           </div>
         </form>

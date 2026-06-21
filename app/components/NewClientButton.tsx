@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useActionState } from "react";
 import { Plus } from "lucide-react";
 import Modal from "@/app/components/Modal";
 import { TextField, SelectField } from "@/app/components/form-fields";
+import { addClient } from "@/app/lib/actions/clients";
 
 export default function NewClientButton({
   variant = "header",
@@ -11,11 +12,14 @@ export default function NewClientButton({
   variant?: "header" | "empty";
 }) {
   const [open, setOpen] = useState(false);
+  const [state, formAction, pending] = useActionState(addClient, {
+    error: null,
+    success: false,
+  });
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setOpen(false);
-  };
+  useEffect(() => {
+    if (state.success) setOpen(false);
+  }, [state]);
 
   return (
     <>
@@ -42,8 +46,13 @@ export default function NewClientButton({
         title="Nouveau client"
         description="Ajoutez un client à votre portefeuille."
       >
-        <form onSubmit={handleSubmit}>
+        <form action={formAction}>
           <div className="grid grid-cols-1 gap-4 px-6 py-5 sm:grid-cols-2">
+            {state.error && (
+              <p className="sm:col-span-2 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-600">
+                {state.error}
+              </p>
+            )}
             <TextField
               id="name"
               label="Nom complet"
@@ -91,9 +100,10 @@ export default function NewClientButton({
             </button>
             <button
               type="submit"
-              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800"
+              disabled={pending}
+              className="rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-gray-800 disabled:opacity-60"
             >
-              Créer le client
+              {pending ? "Création..." : "Créer le client"}
             </button>
           </div>
         </form>
