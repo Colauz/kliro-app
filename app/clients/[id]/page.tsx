@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import Sidebar from "@/app/components/Sidebar";
 import MobileNav from "@/app/components/MobileNav";
+import CopyPortalLink from "@/app/components/CopyPortalLink";
 import EmptyState from "@/app/components/EmptyState";
 import { currency, initials, documentIcons } from "@/app/lib/format";
 import {
@@ -147,6 +148,9 @@ export default async function ClientDetailPage({
                 </div>
 
                 <div className="flex items-center gap-2">
+                  {client.portalToken && (
+                    <CopyPortalLink token={client.portalToken} />
+                  )}
                   <button
                     type="button"
                     className="inline-flex items-center gap-1.5 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-50"

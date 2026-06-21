@@ -12,6 +12,7 @@ export interface Client {
   phone: string;
   status: ClientStatus;
   activeProjects: number;
+  portalToken: string;
 }
 
 export interface Invoice {
@@ -102,6 +103,7 @@ function rowToClient(row: any): Client {
     phone: row.phone,
     status: row.status as ClientStatus,
     activeProjects: row.active_projects ?? row.activeProjects ?? 0,
+    portalToken: row.portal_token ?? "",
   };
 }
 
