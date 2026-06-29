@@ -1,7 +1,9 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PATHS = ["/dashboard", "/clients", "/invoices", "/settings"];
+// Enumerate public paths instead of protected ones so the root "/" is
+// implicitly protected without a startsWith("/") that would match everything.
+const PUBLIC_PATHS = ["/login", "/portal"];
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -33,21 +35,33 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
-  const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p));
+  const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p));
 
-  if (!user && isProtected) {
+  if (!user && !isPublic) {
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return redirectWithCookies(url, supabaseResponse);
   }
 
-  if (user && pathname === "/login") {
+  if (user && pathname.startsWith("/login")) {
     const url = request.nextUrl.clone();
-    url.pathname = "/dashboard";
-    return NextResponse.redirect(url);
+    url.pathname = "/";
+    return redirectWithCookies(url, supabaseResponse);
   }
 
   return supabaseResponse;
+}
+
+// Forward any cookies that Supabase wrote during getUser() (e.g. a refreshed
+// token) onto the redirect response, otherwise the next request will see the
+// old token, fail auth, and redirect again — causing an infinite loop.
+function redirectWithCookies(url: URL, supabaseResponse: NextResponse): NextResponse {
+  const response = NextResponse.redirect(url);
+  for (const cookie of supabaseResponse.cookies.getAll()) {
+    const { name, value, ...options } = cookie;
+    response.cookies.set(name, value, options);
+  }
+  return response;
 }
 
 export const config = {

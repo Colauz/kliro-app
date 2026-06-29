@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { CircleDot, LogOut } from "lucide-react";
 import { navItems, isNavItemActive } from "@/app/lib/navigation";
+import { signOut } from "@/app/lib/actions/auth";
 
 export default function Sidebar() {
   const pathname = usePathname();
@@ -51,13 +52,15 @@ export default function Sidebar() {
           </div>
         </div>
 
-        <Link
-          href="/login"
-          className="mt-1 flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
-        >
-          <LogOut className="h-[18px] w-[18px]" strokeWidth={2} />
-          Se déconnecter
-        </Link>
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="mt-1 flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900"
+          >
+            <LogOut className="h-[18px] w-[18px]" strokeWidth={2} />
+            Se déconnecter
+          </button>
+        </form>
       </div>
     </aside>
   );

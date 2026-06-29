@@ -1,7 +1,6 @@
-import { redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 
-// Le portail client est accessible via /portal/[token].
-// /portal seul n'est pas une URL valide.
+// /portal alone is not a valid URL — the client portal lives at /portal/[token].
 export default function PortalIndexPage() {
-  redirect("/login");
+  notFound();
 }

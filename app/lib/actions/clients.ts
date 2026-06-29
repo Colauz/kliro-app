@@ -26,10 +26,12 @@ export async function addClient(
     phone: (formData.get("phone") as string) || "",
     status: (formData.get("status") as string) || "active",
     user_id: user.id,
-    active_projects: 0,
   });
 
-  if (error) return { error: "Impossible de créer le client.", success: false };
+  if (error) {
+    console.error("SUPABASE INSERT ERROR:", error);
+    return { error: "Impossible de créer le client.", success: false };
+  }
 
   revalidatePath("/clients");
   revalidatePath("/");
